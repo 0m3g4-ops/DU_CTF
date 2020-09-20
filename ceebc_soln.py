@@ -1,0 +1,22 @@
+from pwn import *
+r=remote("chal.duc.tf",30202)
+orig_txt=b"cashcashcashcash"
+pt=r.recvline()
+print(pt)
+ct=pt[61:-2]
+payload=ct[0:32].decode()
+print(ct)
+iv=ct[32:]
+print(iv)
+iv=bytes.fromhex(iv.decode())
+enc=xor(orig_txt,iv)
+flag=b'flagflagflagflag'
+p_iv=xor(flag,enc)
+payload+=p_iv.hex()
+flag=flag.decode()
+print(r.recv())
+r.sendline(flag)
+r.recv()
+r.sendline(payload)
+print(r.recv())
+###DUCTF{WAT_I_THOUGHT_IV_IZ_G00D}###
